@@ -43,6 +43,7 @@ class AllocatePayload(BaseModel):
 class CreateItemPayload(BaseModel):
     name: str
     category: str
+    description: str = ""
     specs: str = ""
     material: str = ""
     quantity: int = 1
@@ -60,6 +61,7 @@ class CreateItemPayload(BaseModel):
 class UpdateItemPayload(BaseModel):
     name: Optional[str] = None
     category: Optional[str] = None
+    description: Optional[str] = None
     specs: Optional[str] = None
     material: Optional[str] = None
     quantity: Optional[int] = None
@@ -229,15 +231,16 @@ def create_item(payload: CreateItemPayload):
     with conn:
         conn.execute(
             """INSERT INTO items (
-                id, name, category, specs, material, quantity, min_quantity,
+                id, name, category, description, specs, material, quantity, min_quantity,
                 last_restock_total, last_restock_amount,
                 home_bin_tag_id, home_location_label,
                 purchased_at, last_stocked_at, added_by, purchase_url, cad_url, slicer_url
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 item_id,
                 payload.name,
                 payload.category,
+                payload.description,
                 payload.specs,
                 payload.material,
                 payload.quantity,
@@ -285,6 +288,7 @@ def update_item(item_id: str, payload: UpdateItemPayload):
     editable_fields = (
         "name",
         "category",
+        "description",
         "specs",
         "material",
         "quantity",

@@ -85,6 +85,7 @@ export function PartTransferWorkspace({
       return (
         item.name.toLowerCase().includes(q) ||
         item.category.toLowerCase().includes(q) ||
+        (item.description || "").toLowerCase().includes(q) ||
         item.home_location_label.toLowerCase().includes(q) ||
         item.material.toLowerCase().includes(q) ||
         item.specs.toLowerCase().includes(q)

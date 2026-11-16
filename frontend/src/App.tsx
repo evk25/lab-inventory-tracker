@@ -191,6 +191,7 @@ export function App() {
     payload: {
       name: string;
       category: string;
+      description: string;
       specs: string;
       material: string;
       quantity: number;
@@ -227,6 +228,7 @@ export function App() {
   const handleCreateItem = async (payload: {
     name: string;
     category: string;
+    description: string;
     specs: string;
     material: string;
     quantity: number;

@@ -13,6 +13,7 @@ interface Props {
     payload: {
       name: string;
       category: string;
+      description: string;
       specs: string;
       material: string;
       quantity: number;
@@ -30,6 +31,7 @@ interface Props {
   onCreateItem: (payload: {
     name: string;
     category: string;
+    description: string;
     specs: string;
     material: string;
     quantity: number;
@@ -80,6 +82,7 @@ export function PortalView({
   const [modifyForm, setModifyForm] = useState({
     name: "",
     category: "",
+    description: "",
     specs: "",
     material: "",
     quantity: 0,
@@ -106,6 +109,7 @@ export function PortalView({
   const [form, setForm] = useState({
     name: "",
     category: "Hardware & Fasteners",
+    description: "",
     specs: "",
     material: "",
     quantity: 1,
@@ -135,6 +139,7 @@ export function PortalView({
     setModifyForm({
       name: item.name,
       category: item.category,
+      description: item.description || "",
       specs: item.specs || "",
       material: item.material || "",
       quantity: item.quantity,
@@ -186,6 +191,7 @@ export function PortalView({
       return (
         i.name.toLowerCase().includes(q) ||
         i.category.toLowerCase().includes(q) ||
+        (i.description || "").toLowerCase().includes(q) ||
         i.home_location_label.toLowerCase().includes(q) ||
         i.added_by.toLowerCase().includes(q) ||
         i.material.toLowerCase().includes(q)
@@ -321,6 +327,11 @@ export function PortalView({
                       <tr key={item.id}>
                         <td>
                           <div style={{ fontWeight: 600 }}>{item.name}</div>
+                          {item.description && (
+                            <div style={{ fontSize: 12, color: "var(--text)", marginTop: 2 }}>
+                              {item.description}
+                            </div>
+                          )}
                           {(item.material || item.specs) && (
                             <div style={{ fontSize: 12, color: "var(--muted)" }}>
                               {[item.specs, item.material].filter(Boolean).join(" • ")}
@@ -912,6 +923,16 @@ export function PortalView({
               </label>
             </div>
 
+            <label style={{ fontSize: 12, fontWeight: 600 }}>
+              Description
+              <input
+                className="input"
+                placeholder="Short description / usage notes..."
+                value={modifyForm.description}
+                onChange={(e) => setModifyForm({ ...modifyForm, description: e.target.value })}
+              />
+            </label>
+
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8 }}>
               <label style={{ fontSize: 12, fontWeight: 600 }}>
                 Spare Qty
@@ -1254,6 +1275,7 @@ export function PortalView({
               setForm({
                 name: "",
                 category: "Hardware & Fasteners",
+                description: "",
                 specs: "",
                 material: "",
                 quantity: 1,
@@ -1271,6 +1293,12 @@ export function PortalView({
               placeholder="Item Name (e.g., M3x10 Standoff)"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+            <input
+              className="input"
+              placeholder="Description (e.g., Aluminum standoff for Eagle FC stack)"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
             />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
               <input

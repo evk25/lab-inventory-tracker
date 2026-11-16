@@ -66,6 +66,7 @@ def init_db() -> None:
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
                 category TEXT NOT NULL,
+                description TEXT DEFAULT '',
                 specs TEXT DEFAULT '',
                 material TEXT DEFAULT '',
                 quantity INTEGER NOT NULL DEFAULT 0,
@@ -106,4 +107,7 @@ def init_db() -> None:
             );
             """
         )
+        cols = {r["name"] for r in conn.execute("PRAGMA table_info(items)").fetchall()}
+        if "description" not in cols:
+            conn.execute("ALTER TABLE items ADD COLUMN description TEXT DEFAULT ''")
     conn.close()
