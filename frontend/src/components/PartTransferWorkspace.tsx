@@ -6,6 +6,8 @@ interface Props {
   variant: "kiosk" | "wiki";
   sourceLabel: string;
   data: BootstrapData;
+  kioskTab?: "checkout" | "checkin";
+  onKioskTabChange?: (tab: "checkout" | "checkin") => void;
   onAllocate: (itemId: string, projectId: string, delta: number, source: string) => void;
   onConsume: (itemId: string, projectId: string, quantity: number, source: string) => void;
   onCreateProject: (name: string) => void;
@@ -15,12 +17,16 @@ export function PartTransferWorkspace({
   variant,
   sourceLabel,
   data,
+  kioskTab: controlledTab,
+  onKioskTabChange,
   onAllocate,
   onConsume,
   onCreateProject,
 }: Props) {
   const isKiosk = variant === "kiosk";
-  const [kioskTab, setKioskTab] = useState<"checkout" | "checkin">("checkout");
+  const [internalTab, setInternalTab] = useState<"checkout" | "checkin">("checkout");
+  const kioskTab = controlledTab ?? internalTab;
+  const setKioskTab = onKioskTabChange ?? setInternalTab;
   const [checkInProjId, setCheckInProjId] = useState<string>(data.projects[0]?.id ?? "");
 
   const [query, setQuery] = useState("");
@@ -29,6 +35,8 @@ export function PartTransferWorkspace({
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const dragItemIdRef = useRef<string | null>(null);
   const [dropTarget, setDropTarget] = useState<string | null>(null);
+  const [flashedBucketId, setFlashedBucketId] = useState<string | null>(null);
+  const flashTimerRef = useRef<number | null>(null);
   const touchDragRef = useRef<{ itemId: string; startX: number; startY: number; active: boolean } | null>(null);
   const [expandedProjectId, setExpandedProjectId] = useState<string | null>(null);
   const [photoItem, setPhotoItem] = useState<Item | null>(null);
@@ -98,10 +106,20 @@ export function PartTransferWorkspace({
     [data.items, selectedItemId]
   );
 
+  const triggerBucketFlash = (projectId: string) => {
+    if (flashTimerRef.current) window.clearTimeout(flashTimerRef.current);
+    setFlashedBucketId(null);
+    requestAnimationFrame(() => {
+      setFlashedBucketId(projectId);
+      flashTimerRef.current = window.setTimeout(() => setFlashedBucketId(null), 550);
+    });
+  };
+
   const handleDropOnProject = (projectId: string, dataTransferId?: string) => {
     const id = dataTransferId || dragItemIdRef.current;
     if (id) {
       onAllocate(id, projectId, 1, sourceLabel);
+      triggerBucketFlash(projectId);
     }
     dragItemIdRef.current = null;
     setDropTarget(null);
@@ -123,7 +141,7 @@ export function PartTransferWorkspace({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
-      {isKiosk && (
+      {isKiosk && !controlledTab && (
         <div className="portal-tabs" style={{ padding: "0 12px" }}>
           <button
             className={`tab-btn ${kioskTab === "checkout" ? "active" : ""}`}
@@ -360,7 +378,9 @@ export function PartTransferWorkspace({
                     <div
                       key={proj.id}
                       data-bucket-id={proj.id}
-                      className={`bucket-card ${dropTarget === proj.id ? "drop-active" : ""}`}
+                      className={`bucket-card ${dropTarget === proj.id ? "drop-active" : ""} ${
+                        flashedBucketId === proj.id ? "just-updated" : ""
+                      }`}
                       style={{
                         borderLeft: `5px solid ${proj.color}`,
                         padding: isKiosk ? "14px 12px" : "12px",
@@ -387,6 +407,7 @@ export function PartTransferWorkspace({
                       onClick={() => {
                         if (selectedItem) {
                           onAllocate(selectedItem.id, proj.id, 1, sourceLabel);
+                          triggerBucketFlash(proj.id);
                           setSelectedItemId(null);
                         } else if (!isKiosk) {
                           setExpandedProjectId(isExpanded ? null : proj.id);

@@ -267,6 +267,23 @@ select {
   background: var(--primary-soft);
 }
 
+@keyframes bucket-flash {
+  0% {
+    background: #bbf7d0;
+    border-color: var(--success);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.35);
+  }
+  100% {
+    background: var(--surface-alt);
+    border-color: var(--border);
+    box-shadow: none;
+  }
+}
+
+.bucket-card.just-updated {
+  animation: bucket-flash 0.55s ease-out;
+}
+
 .bucket-card.home-drop {
   border-color: #a7f3d0;
   background: var(--success-soft);

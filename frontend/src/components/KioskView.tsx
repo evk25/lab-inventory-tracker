@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { BootstrapData } from "../types";
 import { PartTransferWorkspace } from "./PartTransferWorkspace";
 
@@ -16,13 +17,56 @@ export function KioskView({
   onCreateProject,
   onSwitchMode,
 }: Props) {
+  const [kioskTab, setKioskTab] = useState<"checkout" | "checkin">("checkout");
+
   return (
     <div className="kiosk-shell">
-      <div className="topbar" style={{ padding: "8px 12px" }}>
-        <div className="topbar-title" style={{ fontSize: 15 }}>
-          <span>Shelf Kiosk</span>
-          <span className="badge">Quadrotor Lab</span>
+      <div className="topbar" style={{ padding: "6px 12px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <div
+            className="topbar-title"
+            style={{
+              fontSize: 14,
+              background: "#e2e8f0",
+              color: "#0f172a",
+              border: "1px solid #cbd5e1",
+              padding: "6px 12px",
+              borderRadius: 0,
+            }}
+          >
+            <span>Shelf Kiosk</span>
+            <span
+              className="badge"
+              style={{
+                background: "#f8fafc",
+                borderColor: "#cbd5e1",
+                color: "#475569",
+                fontSize: 11,
+                borderRadius: 0,
+              }}
+            >
+              Quadrotor Lab
+            </span>
+          </div>
+
+          <div style={{ display: "flex", gap: 4 }}>
+            <button
+              className={`tab-btn ${kioskTab === "checkout" ? "active" : ""}`}
+              style={{ padding: "6px 12px" }}
+              onClick={() => setKioskTab("checkout")}
+            >
+              Check Out
+            </button>
+            <button
+              className={`tab-btn ${kioskTab === "checkin" ? "active" : ""}`}
+              style={{ padding: "6px 12px" }}
+              onClick={() => setKioskTab("checkin")}
+            >
+              Check In / Manage Bucket
+            </button>
+          </div>
         </div>
+
         <button className="btn btn-sm" onClick={() => onSwitchMode("portal")}>
           Open Wiki Portal
         </button>
@@ -32,6 +76,8 @@ export function KioskView({
         variant="kiosk"
         sourceLabel="Kiosk"
         data={data}
+        kioskTab={kioskTab}
+        onKioskTabChange={setKioskTab}
         onAllocate={onAllocate}
         onConsume={onConsume}
         onCreateProject={onCreateProject}
