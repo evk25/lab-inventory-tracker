@@ -35,3 +35,10 @@
 | **F-12** | LiPo Battery Cycle & Health Log | Track cell count, storage voltage, cycle count, and retirement status. | P2 | `Deferred` |
 | **F-13** | Datasheet & CAD Attachments | Attach pinouts, STEP/SLDPRT files, slicer profiles, and calibration notes directly to parts. | P2 | `Deferred` |
 | **F-14** | Hardware Caddy Bin Matrix Labeling | Label individual cells in a row/column grid overlay for multi-drawer organizers (e.g., Hardware Caddy). | P2 | `Deferred` |
+| **F-15** | Persistent `DATA_DIR` & Schema Migrations | Configurable external data directory (`/var/lib/lab-inventory`) and safe DB migrations so deployments never overwrite live data. | P1 | `Planned` |
+| **F-16** | Automated SQLite & Media Backups | Nightly online SQLite `.backup` + uploaded shelf photo snapshots synced to private off-box storage. | P1 | `Planned` |
+| **F-17** | Portable Snapshot Export | One-click CSV / JSON / Markdown export of Spare Inventory, Project Buckets, and Movement Journal from `/portal/`. | P2 | `Planned` |
+| **F-18** | SQLite WAL Mode | Enable `PRAGMA journal_mode=WAL;` so concurrent kiosk and wiki writes avoid lock contention. | P1 | `Planned` |
+| **F-19** | HTTPS Reverse Proxy & Outline `iframe` Headers | Serve behind Nginx/Caddy over HTTPS with `Content-Security-Policy: frame-ancestors` for Outline embedding and restricted CORS origins. | P1 | `Planned` |
+| **F-20** | Process Supervision / Containerization | Run `uvicorn` via `systemd` or Docker (`restart: always`) for 24/7 uptime across server reboots. | P1 | `Planned` |
+| **F-21** | `production` Branch CI/CD Pipeline | Automated GitHub Actions workflow on `production` to build `frontend/dist`, deploy to the school cluster, and restart the service without touching `DATA_DIR`. | P1 | `Planned` |
